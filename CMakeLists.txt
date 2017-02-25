@@ -26,11 +26,6 @@ endif()
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 
-find_package(SSE)
-if (SSE2_FOUND)
-	set(USE_SSE YES)
-endif()
-
 set(ALLTOALLV_FIX YES) # Simply does not build without
 set(PVFMM_PRECOMP_DATA_PATH "\"\"")
 configure_file("include/pvfmm_config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/pvfmm_config.h" @ONLY)
