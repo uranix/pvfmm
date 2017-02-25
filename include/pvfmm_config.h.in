@@ -1,0 +1,16 @@
+#ifndef __PVFMM_CONFIG_H__
+#define __PVFMM_CONFIG_H__
+
+#cmakedefine PVFMM_HAVE_FFTW
+
+#cmakedefine PVFMM_HAVE_FFTWF
+
+#define PVFMM_PRECOMP_DATA_PATH @PVFMM_PRECOMP_DATA_PATH@
+
+#cmakedefine ALLTOALLV_FIX
+
+#cmakedefine USE_SSE
+
+#define PVFMM_HAVE_SYS_STAT_H
+
+#endif
