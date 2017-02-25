@@ -1865,7 +1865,7 @@ namespace
         double y = ty[i] - sy[j];
         double z = tz[i] - sz[j];
         double r2 = x*x + y*y + z*z;
-        double r = pvfmm::sqrt<T>(r2);
+        double r = pvfmm::sqrt<double>(r2);
         double invdr;
         if (r == 0)
           invdr = 0;
@@ -2040,7 +2040,7 @@ namespace
         double y = ty[i] - sy[j];
         double z = tz[i] - sz[j];
         double r2 = x*x + y*y + z*z;
-        double r = pvfmm::sqrt<T>(r2);
+        double r = pvfmm::sqrt<double>(r2);
         double invdr;
         if (r == 0)
           invdr = 0;
@@ -2229,7 +2229,7 @@ namespace
         double y = ty[i] - sy[j];
         double z = tz[i] - sz[j];
         double r2 = x*x + y*y + z*z;
-        double r = pvfmm::sqrt<T>(r2);
+        double r = pvfmm::sqrt<double>(r2);
         double invdr;
         if (r == 0)
           invdr = 0;
