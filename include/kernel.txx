@@ -1750,7 +1750,7 @@ void stokes_grad(T* r_src, int src_cnt, T* v_src_, int dof, T* r_trg, int trg_cn
 }
 
 #ifndef __MIC__
-#ifdef USE_SSE
+#if defined __SSE3__
 namespace
 {
 #define IDEAL_ALIGNMENT 16
