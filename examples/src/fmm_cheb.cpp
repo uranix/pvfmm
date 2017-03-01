@@ -507,7 +507,7 @@ int main(int argc, char **argv){
   int p; MPI_Comm_size(comm,&p);
   if(p>8){ // Remove slow processors.
     MPI_Comm comm_=MPI_COMM_WORLD;
-    size_t N=2048;
+    int N=2048;
     pvfmm::Matrix<double> A(N,N);
     pvfmm::Matrix<double> B(N,N);
     pvfmm::Matrix<double> C(N,N);

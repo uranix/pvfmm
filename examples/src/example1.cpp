@@ -59,12 +59,12 @@ void nbody(vec&  src_coord, vec&  src_value,
 void fmm_test(size_t N, int mult_order, MPI_Comm comm){
 
   // Set kernel.
-  const pvfmm::Kernel<double>& kernel_fn=pvfmm::LaplaceKernel<double>::gradient();
+  const pvfmm::Kernel<double>& kernel_fn=pvfmm::LaplaceKernel<double>::potential();
 
   // Create target and source vectors.
   vec  trg_coord=point_distrib<double>(RandUnif,N,comm);
   vec  src_coord=point_distrib<double>(RandUnif,N,comm);
-  vec surf_coord=point_distrib<double>(RandUnif,0,comm);
+  vec surf_coord=point_distrib<double>(RandUnif,N,comm);
   size_t n_trg = trg_coord.size()/COORD_DIM;
   size_t n_src = src_coord.size()/COORD_DIM;
   size_t n_surf=surf_coord.size()/COORD_DIM;
@@ -75,12 +75,10 @@ void fmm_test(size_t N, int mult_order, MPI_Comm comm){
   for(size_t i=0;i< src_value.size();i++)  src_value[i]=drand48();
   for(size_t i=0;i<surf_value.size();i++) surf_value[i]=drand48();
 
-  // Create memory-manager (optional)
-  pvfmm::mem::MemoryManager mem_mgr(10000000);
-
   // Construct tree.
   size_t max_pts=600;
   pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree(src_coord, src_value, surf_coord, surf_value, trg_coord, comm, max_pts, pvfmm::FreeSpace);
+  pvfmm::mem::MemoryManager mem_mgr(100000000);
 
   // Load matrices.
   pvfmm::PtFMM matrices(&mem_mgr);
@@ -109,7 +107,7 @@ void fmm_test(size_t N, int mult_order, MPI_Comm comm){
       for(size_t i=0;i<n_trg;i=i+n_skip){
         for(size_t j=0;j<COORD_DIM;j++)
           trg_sample_coord.push_back(trg_coord[i*COORD_DIM+j]);
-        for(size_t j=0;j<kernel_fn.ker_dim[1];j++)
+        for(size_t j=0;j<static_cast<size_t>(kernel_fn.ker_dim[1]);j++)
           trg_sample_value.push_back(trg_value[i*kernel_fn.ker_dim[1]+j]);
         n_trg_sample++;
       }

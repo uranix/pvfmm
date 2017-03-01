@@ -585,7 +585,7 @@ void FMM_Tree<FMM_Mat_t>::DownwardPass() {
     Profile::Toc();
   }
 
-  for(size_t i=0; i<=(fmm_mat->ScaleInvar()?0:max_depth); i++){ // U,V,W,X-lists
+  for(int i=0; i<=(fmm_mat->ScaleInvar()?0:max_depth); i++){ // U,V,W,X-lists
 
     if(!fmm_mat->ScaleInvar()){ // Precomp
       std::stringstream level_str;
@@ -701,7 +701,7 @@ void FMM_Tree<FMM_Mat_t>::DownwardPass() {
   #endif
 
   Profile::Tic("D2D",this->Comm(),false,5);
-  for(size_t i=0; i<=max_depth; i++){ // Down2Down
+  for(int i=0; i<=max_depth; i++){ // Down2Down
     if(!fmm_mat->ScaleInvar()) fmm_mat->SetupPrecomp(setup_data[i+MAX_DEPTH*4],/*device*/ false);
     fmm_mat->Down2Down(setup_data[i+MAX_DEPTH*4]);
   }

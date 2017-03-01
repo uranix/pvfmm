@@ -17,7 +17,6 @@ void CheckFMMOutput(pvfmm::FMM_Tree<FMM_Mat_t>* mytree, const pvfmm::Kernel<type
   MPI_Comm_rank(c1, &myrank);
   MPI_Comm_size(c1,&p);
 
-  typedef typename FMM_Mat_t::FMMData FMM_Data_t;
   typedef typename FMM_Mat_t::FMMNode_t FMMNode_t;
   typedef typename FMM_Mat_t::Real_t Real_t;
 
@@ -141,7 +140,7 @@ void CheckChebOutput(FMMTree_t* mytree, typename TestFn<typename FMMTree_t::Real
   { // Determine glb_err_avg.
     std::vector<Real_t> err_avg(omp_p*dof*fn_dof,0);
     #pragma omp parallel for
-    for(size_t tid=0;tid<omp_p;tid++){
+    for(int tid=0;tid<omp_p;tid++){
       pvfmm::Vector<Real_t> out; out.SetZero();
       pvfmm::Vector<Real_t> fn_out(dof*fn_dof);
       for(size_t i=(nodes.size()*tid)/omp_p;i<(nodes.size()*(tid+1))/omp_p;i++){
@@ -151,24 +150,24 @@ void CheckChebOutput(FMMTree_t* mytree, typename TestFn<typename FMMTree_t::Real
         Real_t* c=nodes[i]->Coord();
         Real_t s=pow(2.0,-nodes[i]->Depth());
         Real_t s3=s*s*s;
-        for(size_t j=0;j<n_pts;j++){
+        for(int j=0;j<n_pts;j++){
           Real_t coord[3]={c[0]+s*cheb_pts[j*COORD_DIM+0],
                            c[1]+s*cheb_pts[j*COORD_DIM+1],
                            c[2]+s*cheb_pts[j*COORD_DIM+2]};
           fn_out.SetZero();
-          for(size_t k=0;k<dof;k++)
+          for(size_t k=0;k<static_cast<size_t>(dof);k++)
             fn_poten(coord,1,&fn_out[k*fn_dof]);
-          for(size_t k=0;k<dof*fn_dof;k++){
+          for(size_t k=0;k<static_cast<size_t>(dof)*fn_dof;k++){
             Real_t err=out[n_pts*k+j]-fn_out[k];
             err_avg[tid*dof*fn_dof+k]+=err*s3;
           }
         }
       }
-      for(size_t k=0;k<dof*fn_dof;k++)
+      for(size_t k=0;k<static_cast<size_t>(dof)*fn_dof;k++)
         err_avg[tid*dof*fn_dof+k]/=n_pts;
     }
-    for(size_t tid=1;tid<omp_p;tid++)
-      for(size_t k=0;k<dof*fn_dof;k++)
+    for(int tid=1;tid<omp_p;tid++)
+      for(size_t k=0;k<static_cast<size_t>(dof)*fn_dof;k++)
         err_avg[k]+=err_avg[tid*dof*fn_dof+k];
     MPI_Allreduce(&err_avg[0], &glb_err_avg[0], dof*fn_dof, pvfmm::par::Mpi_datatype<Real_t>::value(), pvfmm::par::Mpi_datatype<Real_t>::sum(), c1);
   }
@@ -222,7 +221,7 @@ void CheckChebOutput(FMMTree_t* mytree, typename TestFn<typename FMMTree_t::Real
   std::vector<Real_t> max    (omp_p,0), l2    (omp_p,0);
   std::vector<Real_t> max_err(omp_p,0), l2_err(omp_p,0);
   #pragma omp parallel for
-  for(size_t tid=0;tid<omp_p;tid++){
+  for(int tid=0;tid<omp_p;tid++){
     pvfmm::Vector<Real_t> out; out.SetZero();
     pvfmm::Vector<Real_t> fn_out(dof*fn_dof);
     for(size_t i=(nodes.size()*tid)/omp_p;i<(nodes.size()*(tid+1))/omp_p;i++){
@@ -232,14 +231,14 @@ void CheckChebOutput(FMMTree_t* mytree, typename TestFn<typename FMMTree_t::Real
       Real_t* c=nodes[i]->Coord();
       Real_t s=pow(2.0,-nodes[i]->Depth());
       Real_t s3=s*s*s;
-      for(size_t j=0;j<n_pts;j++){
+      for(size_t j=0;j<static_cast<size_t>(n_pts);j++){
         Real_t coord[3]={c[0]+s*cheb_pts[j*COORD_DIM+0],
                          c[1]+s*cheb_pts[j*COORD_DIM+1],
                          c[2]+s*cheb_pts[j*COORD_DIM+2]};
         fn_out.SetZero();
-        for(size_t k=0;k<dof;k++)
+        for(size_t k=0;k<static_cast<size_t>(dof);k++)
           fn_poten(coord,1,&fn_out[k*fn_dof]);
-        for(size_t k=0;k<dof*fn_dof;k++){
+        for(size_t k=0;k<static_cast<size_t>(dof)*fn_dof;k++){
           Real_t err=out[n_pts*k+j]-fn_out[k]-glb_err_avg[k];
           if(fabs(fn_out[k])>max    [tid]) max    [tid]=fabs(fn_out[k]);
           if(fabs(err      )>max_err[tid]) max_err[tid]=fabs(err      );
@@ -251,7 +250,7 @@ void CheckChebOutput(FMMTree_t* mytree, typename TestFn<typename FMMTree_t::Real
     l2    [tid]/=n_pts;
     l2_err[tid]/=n_pts;
   }
-  for(size_t tid=1;tid<omp_p;tid++){
+  for(int tid=1;tid<omp_p;tid++){
     if(max    [tid]>max    [0]) max    [0]=max    [tid];
     if(max_err[tid]>max_err[0]) max_err[0]=max_err[tid];
     l2    [0]+=l2    [tid];

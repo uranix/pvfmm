@@ -111,9 +111,9 @@ class FMM_Pts{
   /**
    * \brief Constructor.
    */
-  FMM_Pts(mem::MemoryManager* mem_mgr_=NULL): mem_mgr(mem_mgr_),
-             vprecomp_fft_flag(false), vlist_fft_flag(false),
-               vlist_ifft_flag(false), mat(NULL), kernel(NULL){};
+  FMM_Pts(mem::MemoryManager* mem_mgr_=NULL): vprecomp_fft_flag(false),
+                vlist_fft_flag(false), vlist_ifft_flag(false),
+                mem_mgr(mem_mgr_), kernel(NULL), mat(NULL){};
 
   /**
    * \brief Virtual destructor.

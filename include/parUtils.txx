@@ -302,7 +302,7 @@ namespace par{
       // initialize ...
 
       #pragma omp parallel for
-      for (size_t i = 0; i < npesLong; i++) {
+      for (size_t i = 0; i < static_cast<size_t>(npesLong); i++) {
         sendSz[i] = 0;
       }
 
@@ -537,7 +537,7 @@ namespace par{
         MPI_Scan(&loc_size, &glb_dsp, 1, par::Mpi_datatype<long long>::value(), par::Mpi_datatype<long long>::sum(), comm);
         glb_dsp-=loc_size;
         #pragma omp parallel for
-        for(size_t i=0;i<loc_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(loc_size);i++){
           parray[i].key=key[i];
           parray[i].data=glb_dsp+i;
         }
@@ -567,7 +567,7 @@ namespace par{
         // initialize ...
 
         #pragma omp parallel for
-        for (size_t i = 0; i < npesLong; i++) {
+        for (size_t i = 0; i < static_cast<size_t>(npesLong); i++) {
           sendSz[i] = 0;
         }
 
@@ -666,7 +666,7 @@ namespace par{
       Vector<Pair_t> psorted(recv_size);
       {
         #pragma omp parallel for
-        for(size_t i=0;i<recv_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(recv_size);i++){
           psorted[i].key=scatter_index[i];
           psorted[i].data=i;
         }
@@ -682,14 +682,15 @@ namespace par{
       Vector<int> recvOff(npesLong);
       {
         #pragma omp parallel for
-        for(size_t i=0;i<recv_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(recv_size);i++){
           recv_indx[i]=psorted[i].key;
         }
 
         #pragma omp parallel for
-        for(size_t i=0;i<npesLong;i++){
-          size_t start=              std::lower_bound(&recv_indx[0], &recv_indx[0]+recv_size, glb_scan[  i])-&recv_indx[0];
-          size_t end  =(i+1<npesLong?std::lower_bound(&recv_indx[0], &recv_indx[0]+recv_size, glb_scan[i+1])-&recv_indx[0]:recv_size);
+        for(size_t i=0;i<static_cast<size_t>(npesLong);i++){
+		  bool notlast = i+1<static_cast<size_t>(npesLong);
+          size_t start=         std::lower_bound(&recv_indx[0], &recv_indx[0]+recv_size, glb_scan[  i])-&recv_indx[0];
+          size_t end  =(notlast?std::lower_bound(&recv_indx[0], &recv_indx[0]+recv_size, glb_scan[i+1])-&recv_indx[0]:recv_size);
           recvSz[i]=end-start;
           recvOff[i]=start;
         }
@@ -702,7 +703,7 @@ namespace par{
         par::Mpi_Alltoallv_dense<size_t>(&recv_indx[0], &recvSz[0], &recvOff[0],
                                          &send_indx[0], &sendSz[0], &sendOff[0], comm);
         #pragma omp parallel for
-        for(size_t i=0;i<send_size;i++){
+        for(long long i=0;i<send_size;i++){
           assert(send_indx[i]>=glb_scan[rank]);
           send_indx[i]-=glb_scan[rank];
           assert(send_indx[i]<send_size);
@@ -713,7 +714,7 @@ namespace par{
       {
         char* data=(char*)&data_[0];
         #pragma omp parallel for
-        for(size_t i=0;i<send_size;i++){
+        for(long long i=0;i<send_size;i++){
           size_t src_indx=send_indx[i]*data_dim;
           size_t trg_indx=i*data_dim;
           for(size_t j=0;j<data_dim;j++)
@@ -724,7 +725,7 @@ namespace par{
       // All2Allv
       {
         #pragma omp parallel for
-        for(size_t i=0;i<npesLong;i++){
+        for(size_t i=0;i<static_cast<size_t>(npesLong);i++){
           sendSz [i]*=data_dim;
           sendOff[i]*=data_dim;
           recvSz [i]*=data_dim;
@@ -739,7 +740,7 @@ namespace par{
         data_.Resize(recv_size*data_dim/sizeof(T));
         char* data=(char*)&data_[0];
         #pragma omp parallel for
-        for(size_t i=0;i<recv_size;i++){
+        for(long long i=0;i<recv_size;i++){
           size_t src_indx=i*data_dim;
           size_t trg_indx=psorted[i].data*data_dim;
           for(size_t j=0;j<data_dim;j++)
@@ -775,7 +776,7 @@ namespace par{
         assert(loc_size[0]%data_dim==0);
         send_size=loc_size[0]/data_dim;
 
-        if(glb_size[0]!=glb_size[2]*data_dim){
+        if(glb_size[0]!=glb_size[2]*static_cast<long long>(data_dim)){
           recv_size=(((rank+1)*(glb_size[0]/data_dim))/npesLong)-
                     (( rank   *(glb_size[0]/data_dim))/npesLong);
         }
@@ -806,7 +807,7 @@ namespace par{
           Vector<int> send_dsp(npesLong+1);
           Vector<int> recv_dsp(npesLong+1);
           #pragma omp parallel for
-          for(size_t i=0;i<=npesLong;i++){
+          for(size_t i=0;i<=static_cast<size_t>(npesLong);i++){
             send_dsp[i]=std::min(std::max(glb_scan[0][i],glb_rank[1]),glb_rank[1]+loc_size[1])-glb_rank[1];
             recv_dsp[i]=std::min(std::max(glb_scan[1][i],glb_rank[0]),glb_rank[0]+loc_size[0])-glb_rank[0];
           }
@@ -815,11 +816,11 @@ namespace par{
           Vector<int> send_cnt(npesLong+0);
           Vector<int> recv_cnt(npesLong+0);
           #pragma omp parallel for reduction(+:commCnt)
-          for(size_t i=0;i<npesLong;i++){
+          for(size_t i=0;i<static_cast<size_t>(npesLong);i++){
             send_cnt[i]=send_dsp[i+1]-send_dsp[i];
             recv_cnt[i]=recv_dsp[i+1]-recv_dsp[i];
-            if(send_cnt[i] && i!=rank) commCnt++;
-            if(recv_cnt[i] && i!=rank) commCnt++;
+            if(send_cnt[i] && i!=static_cast<size_t>(rank)) commCnt++;
+            if(recv_cnt[i] && i!=static_cast<size_t>(rank)) commCnt++;
           }
 
           pvfmm::Vector<MPI_Request> requests(commCnt);
@@ -869,7 +870,7 @@ namespace par{
       Vector<Pair_t> psorted(send_size);
       {
         #pragma omp parallel for
-        for(size_t i=0;i<send_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(send_size);i++){
           psorted[i].key=scatter_index[i];
           psorted[i].data=i;
         }
@@ -885,14 +886,15 @@ namespace par{
       Vector<int> recvOff(npesLong);
       {
         #pragma omp parallel for
-        for(size_t i=0;i<send_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(send_size);i++){
           send_indx[i]=psorted[i].key;
         }
 
         #pragma omp parallel for
-        for(size_t i=0;i<npesLong;i++){
-          size_t start=              std::lower_bound(&send_indx[0], &send_indx[0]+send_size, glb_scan[  i])-&send_indx[0];
-          size_t end  =(i+1<npesLong?std::lower_bound(&send_indx[0], &send_indx[0]+send_size, glb_scan[i+1])-&send_indx[0]:send_size);
+        for(size_t i=0;i<static_cast<size_t>(npesLong);i++){
+		  bool notlast = (i+1)<static_cast<size_t>(npesLong);
+          size_t start=         std::lower_bound(&send_indx[0], &send_indx[0]+send_size, glb_scan[  i])-&send_indx[0];
+          size_t end  =(notlast?std::lower_bound(&send_indx[0], &send_indx[0]+send_size, glb_scan[i+1])-&send_indx[0]:send_size);
           sendSz[i]=end-start;
           sendOff[i]=start;
         }
@@ -905,7 +907,7 @@ namespace par{
         par::Mpi_Alltoallv_dense<size_t>(&send_indx[0], &sendSz[0], &sendOff[0],
                                          &recv_indx[0], &recvSz[0], &recvOff[0], comm);
         #pragma omp parallel for
-        for(size_t i=0;i<recv_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(recv_size);i++){
           assert(recv_indx[i]>=glb_scan[rank]);
           recv_indx[i]-=glb_scan[rank];
           assert(recv_indx[i]<recv_size);
@@ -916,7 +918,7 @@ namespace par{
       {
         char* data=(char*)&data_[0];
         #pragma omp parallel for
-        for(size_t i=0;i<send_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(send_size);i++){
           size_t src_indx=psorted[i].data*data_dim;
           size_t trg_indx=i*data_dim;
           for(size_t j=0;j<data_dim;j++)
@@ -927,7 +929,7 @@ namespace par{
       // All2Allv
       {
         #pragma omp parallel for
-        for(size_t i=0;i<npesLong;i++){
+        for(size_t i=0;i<static_cast<size_t>(npesLong);i++){
           sendSz [i]*=data_dim;
           sendOff[i]*=data_dim;
           recvSz [i]*=data_dim;
@@ -942,7 +944,7 @@ namespace par{
         data_.Resize(recv_size*data_dim/sizeof(T));
         char* data=(char*)&data_[0];
         #pragma omp parallel for
-        for(size_t i=0;i<recv_size;i++){
+        for(size_t i=0;i<static_cast<size_t>(recv_size);i++){
           size_t src_indx=i*data_dim;
           size_t trg_indx=recv_indx[i]*data_dim;
           for(size_t j=0;j<data_dim;j++)

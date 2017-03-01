@@ -681,7 +681,7 @@ void quad_rule(int n, T* x, T* w){
     }
     Matrix<T> M(n,n);
     cheb_poly(n-1, &x_[0], n, &M[0][0]);
-    for(size_t i=0;i<n;i++) M[0][i]/=2.0;
+    for(int i=0;i<n;i++) M[0][i]/=2.0;
 
     std::vector<T> w_sample(n,0);
     for(long i=0;i<n;i+=2) w_sample[i]=-((T)2.0/(i+1)/(i-1));
@@ -729,13 +729,13 @@ void quad_rule(int n, T* x, T* w){
     //  }
     //}
 
-    for(size_t i=0;i<n;i++)
-    for(size_t j=0;j<n;j++){
+    for(int i=0;i<n;i++)
+    for(int j=0;j<n;j++){
       M[i][j]*=w_sample[i];
     }
 
-    for(size_t i=0;i<n;i++)
-    for(size_t j=0;j<n;j++){
+    for(int i=0;i<n;i++)
+    for(int j=0;j<n;j++){
       w_[j]+=M[i][j]*2/n;
     }
   }
@@ -779,7 +779,7 @@ std::vector<T> integ_pyramid(int m, T* s, T r, int nx, const Kernel<T>& kernel, 
     x_.push_back(pvfmm::fabs<T>(1.0-s[2])+s[0]);
     x_.push_back(pvfmm::fabs<T>(1.0+s[2])+s[0]);
     std::sort(x_.begin(),x_.end());
-    for(int i=0;i<x_.size();i++){
+    for(size_t i=0;i<x_.size();i++){
       if(x_[i]<-1.0) x_[i]=-1.0;
       if(x_[i]> 1.0) x_[i]= 1.0;
     }
@@ -790,7 +790,7 @@ std::vector<T> integ_pyramid(int m, T* s, T r, int nx, const Kernel<T>& kernel, 
     if(pvfmm::fabs<T>(1.0+s[1])>eps) x_jump=std::min(x_jump,(T)pvfmm::fabs<T>(1.0+s[1]));
     if(pvfmm::fabs<T>(1.0-s[2])>eps) x_jump=std::min(x_jump,(T)pvfmm::fabs<T>(1.0-s[2]));
     if(pvfmm::fabs<T>(1.0+s[2])>eps) x_jump=std::min(x_jump,(T)pvfmm::fabs<T>(1.0+s[2]));
-    for(int k=0; k<x_.size()-1; k++){
+    for(size_t k=0; k<x_.size()-1; k++){
       T x0=x_[k];
       T x1=x_[k+1];
 
@@ -830,7 +830,7 @@ std::vector<T> integ_pyramid(int m, T* s, T r, int nx, const Kernel<T>& kernel, 
   Vector<T> I1   (   m *m *k_dim,mem::aligned_new<T>(   m *m *k_dim,&mem_mgr),false);
   Vector<T> I2   (m *m *m *k_dim,mem::aligned_new<T>(m *m *m *k_dim,&mem_mgr),false); I2.SetZero();
   if(x_.size()>1)
-  for(int k=0; k<x_.size()-1; k++){
+  for(size_t k=0; k<x_.size()-1; k++){
     T x0=x_[k];
     T x1=x_[k+1];
 
@@ -1090,7 +1090,7 @@ template <class T>
 std::vector<T> cheb_nodes(int deg, int dim){
   unsigned int d=deg+1;
   std::vector<T> x(d);
-  for(int i=0;i<d;i++)
+  for(unsigned int i=0;i<d;i++)
     x[i]=-pvfmm::cos<T>((i+(T)0.5)*const_pi<T>()/d)*0.5+0.5;
   if(dim==1) return x;
 
@@ -1098,7 +1098,7 @@ std::vector<T> cheb_nodes(int deg, int dim){
   std::vector<T> y(n1*dim);
   for(int i=0;i<dim;i++){
     unsigned int n2=pvfmm::pow<unsigned int>(d,i);
-    for(int j=0;j<n1;j++){
+    for(unsigned int j=0;j<n1;j++){
       y[j*dim+i]=x[(j/n2)%d];
     }
   }

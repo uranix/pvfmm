@@ -106,7 +106,7 @@ void Kernel<T>::Initialize(bool verbose) const{
       for(size_t i=0;i<N;i++){
         BuildMatrix(&src_coord [          0], 1,
                     &trg_coord1[i*COORD_DIM], 1, &(M1[i][0]));
-        for(size_t j=0;j<ker_dim[0]*ker_dim[1];j++){
+        for(size_t j=0;j<static_cast<size_t>(ker_dim[0]*ker_dim[1]);j++){
           abs_sum+=pvfmm::fabs<T>(M1[i][j]);
         }
       }
@@ -125,7 +125,7 @@ void Kernel<T>::Initialize(bool verbose) const{
     }
 
     T max_val=0;
-    for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++){
+    for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++){
       T dot11=0, dot22=0;
       for(size_t j=0;j<N;j++){
         dot11+=M1[j][i]*M1[j][i];
@@ -135,7 +135,7 @@ void Kernel<T>::Initialize(bool verbose) const{
       max_val=std::max<T>(max_val,dot22);
     }
     if(scale_invar)
-    for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++){
+    for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++){
       T dot11=0, dot12=0, dot22=0;
       for(size_t j=0;j<N;j++){
         dot11+=M1[j][i]*M1[j][i];
@@ -169,8 +169,8 @@ void Kernel<T>::Initialize(bool verbose) const{
 
       Matrix<T> M(ker_dim[0]*ker_dim[1]+1,ker_dim[0]+ker_dim[1]); M.SetZero();
       M[ker_dim[0]*ker_dim[1]][0]=1;
-      for(size_t i0=0;i0<ker_dim[0];i0++)
-      for(size_t i1=0;i1<ker_dim[1];i1++){
+      for(size_t i0=0;i0<static_cast<size_t>(ker_dim[0]);i0++)
+      for(size_t i1=0;i1<static_cast<size_t>(ker_dim[1]);i1++){
         size_t j=i0*ker_dim[1]+i1;
         if(b[j][0]>0){
           M[j][ 0+        i0]=1;
@@ -179,15 +179,15 @@ void Kernel<T>::Initialize(bool verbose) const{
       }
       Matrix<T> x=M.pinv()*b;
 
-      for(size_t i=0;i<ker_dim[0];i++){
+      for(size_t i=0;i<static_cast<size_t>(ker_dim[0]);i++){
         src_scal[i]=x[i][0];
       }
-      for(size_t i=0;i<ker_dim[1];i++){
+      for(size_t i=0;i<static_cast<size_t>(ker_dim[1]);i++){
         trg_scal[i]=x[ker_dim[0]+i][0];
       }
 
-      for(size_t i0=0;i0<ker_dim[0];i0++)
-      for(size_t i1=0;i1<ker_dim[1];i1++){
+      for(size_t i0=0;i0<static_cast<size_t>(ker_dim[0]);i0++)
+      for(size_t i1=0;i1<static_cast<size_t>(ker_dim[1]);i1++){
         if(M_scal[i0][i1]>=0){
           if(pvfmm::fabs<T>(src_scal[i0]+trg_scal[i1]-M_scal[i0][i1])>eps_){
             scale_invar=false;
@@ -297,18 +297,18 @@ void Kernel<T>::Initialize(bool verbose) const{
         std::vector<T> norm2(ker_dim[0]*ker_dim[1]);
         {
           for(size_t k=0;k<N;k++)
-          for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++)
-          for(size_t j=0;j<ker_dim[0]*ker_dim[1];j++){
+          for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++)
+          for(size_t j=0;j<static_cast<size_t>(ker_dim[0]*ker_dim[1]);j++){
             dot11[i][j]+=M1[k][i]*M1[k][j];
             dot12[i][j]+=M1[k][i]*M2[k][j];
             dot22[i][j]+=M2[k][i]*M2[k][j];
           }
-          for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++){
+          for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++){
             norm1[i]=pvfmm::sqrt<T>(dot11[i][i]);
             norm2[i]=pvfmm::sqrt<T>(dot22[i][i]);
           }
-          for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++)
-          for(size_t j=0;j<ker_dim[0]*ker_dim[1];j++){
+          for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++)
+          for(size_t j=0;j<static_cast<size_t>(ker_dim[0]*ker_dim[1]);j++){
             dot11[i][j]/=(norm1[i]*norm1[j]);
             dot12[i][j]/=(norm1[i]*norm2[j]);
             dot22[i][j]/=(norm2[i]*norm2[j]);
@@ -318,9 +318,9 @@ void Kernel<T>::Initialize(bool verbose) const{
         long long flag=1;
         M11.Resize(ker_dim[0],ker_dim[1]); M11.SetZero();
         M22.Resize(ker_dim[0],ker_dim[1]); M22.SetZero();
-        for(size_t i=0;i<ker_dim[0]*ker_dim[1];i++){
+        for(size_t i=0;i<static_cast<size_t>(ker_dim[0]*ker_dim[1]);i++){
           if(norm1[i]>eps_ && M11[0][i]==0){
-            for(size_t j=0;j<ker_dim[0]*ker_dim[1];j++){
+            for(size_t j=0;j<static_cast<size_t>(ker_dim[0]*ker_dim[1]);j++){
               if(pvfmm::fabs<T>(norm1[i]-norm1[j])<eps_ && pvfmm::fabs<T>(pvfmm::fabs<T>(dot11[i][j])-1.0)<eps_){
                 M11[0][j]=(dot11[i][j]>0?flag:-flag);
               }
@@ -605,8 +605,8 @@ void Kernel<T>::Initialize(bool verbose) const{
       std::cout<<"Scaling Matrix :\n";
       Matrix<T> Src(ker_dim[0],1);
       Matrix<T> Trg(1,ker_dim[1]);
-      for(size_t i=0;i<ker_dim[0];i++) Src[i][0]=pvfmm::pow<T>(2.0,src_scal[i]);
-      for(size_t i=0;i<ker_dim[1];i++) Trg[0][i]=pvfmm::pow<T>(2.0,trg_scal[i]);
+      for(size_t i=0;i<static_cast<size_t>(ker_dim[0]);i++) Src[i][0]=pvfmm::pow<T>(2.0,src_scal[i]);
+      for(size_t i=0;i<static_cast<size_t>(ker_dim[1]);i++) Trg[0][i]=pvfmm::pow<T>(2.0,trg_scal[i]);
       std::cout<<Src*Trg;
     }
     if(ker_dim[0]*ker_dim[1]>0){ // Accuracy of multipole expansion
@@ -802,7 +802,7 @@ void Kernel<T>::Initialize(bool verbose) const{
       std::vector<T> equiv_surf;
       std::vector<T> check_surf;
       std::vector<T> trg_coord;
-      for(size_t i=0;i<m*COORD_DIM;i++){
+      for(size_t i=0;i<static_cast<size_t>(m*COORD_DIM);i++){
         trg_coord.push_back(drand48()+1.0);
       }
       for(int i0=0;i0<m;i0++){
@@ -839,14 +839,14 @@ void Kernel<T>::Initialize(bool verbose) const{
         #pragma omp parallel for schedule(dynamic)
         for(size_t i=0;i<n_check;i++){ // Compute near-interaction for operator M_near
           std::vector<T> M_=cheb_integ<T>(0, &check_surf[i*3], 3.0, *this);
-          for(size_t j=0; j<ker_dim[0]; j++)
+          for(size_t j=0; j<static_cast<size_t>(ker_dim[0]); j++)
             for(int k=0; k<ker_dim[1]; k++)
               M_near[j][i*ker_dim[1]+k] = M_[j+k*ker_dim[0]];
         }
         #pragma omp parallel for schedule(dynamic)
         for(size_t i=0;i<n_trg;i++){ // Compute near-interaction for targets T_near
           std::vector<T> M_=cheb_integ<T>(0, &trg_coord[i*3], 3.0, *this);
-          for(size_t j=0; j<ker_dim[0]; j++)
+          for(size_t j=0; j<static_cast<size_t>(ker_dim[0]); j++)
             for(int k=0; k<ker_dim[1]; k++)
               T_near[j][i*ker_dim[1]+k] = M_[j+k*ker_dim[0]];
         }
@@ -1004,12 +1004,12 @@ void generic_kernel(Real_t* r_src, int src_cnt, Real_t* v_src, int dof, Real_t* 
     trg_value.ReInit(  TRG_DIM, trg_cnt_,buff_ptr,false);//buff_ptr+=  TRG_DIM*trg_cnt_;
     { // Set src_coord
       size_t i=0;
-      for(   ;i<src_cnt ;i++){
+      for(   ;i<static_cast<size_t>(src_cnt) ;i++){
         for(size_t j=0;j<COORD_DIM;j++){
           src_coord[j][i]=r_src[i*COORD_DIM+j];
         }
       }
-      for(   ;i<src_cnt_;i++){
+      for(   ;i<static_cast<size_t>(src_cnt_);i++){
         for(size_t j=0;j<COORD_DIM;j++){
           src_coord[j][i]=0;
         }
@@ -1017,12 +1017,12 @@ void generic_kernel(Real_t* r_src, int src_cnt, Real_t* v_src, int dof, Real_t* 
     }
     { // Set src_value
       size_t i=0;
-      for(   ;i<src_cnt ;i++){
+      for(   ;i<static_cast<size_t>(src_cnt) ;i++){
         for(size_t j=0;j<SRC_DIM;j++){
           src_value[j][i]=v_src[i*SRC_DIM+j];
         }
       }
-      for(   ;i<src_cnt_;i++){
+      for(   ;i<static_cast<size_t>(src_cnt_);i++){
         for(size_t j=0;j<SRC_DIM;j++){
           src_value[j][i]=0;
         }
@@ -1030,12 +1030,12 @@ void generic_kernel(Real_t* r_src, int src_cnt, Real_t* v_src, int dof, Real_t* 
     }
     { // Set trg_coord
       size_t i=0;
-      for(   ;i<trg_cnt ;i++){
+      for(   ;i<static_cast<size_t>(trg_cnt) ;i++){
         for(size_t j=0;j<COORD_DIM;j++){
           trg_coord[j][i]=r_trg[i*COORD_DIM+j];
         }
       }
-      for(   ;i<trg_cnt_;i++){
+      for(   ;i<static_cast<size_t>(trg_cnt_);i++){
         for(size_t j=0;j<COORD_DIM;j++){
           trg_coord[j][i]=0;
         }
@@ -1043,7 +1043,7 @@ void generic_kernel(Real_t* r_src, int src_cnt, Real_t* v_src, int dof, Real_t* 
     }
     { // Set trg_value
       size_t i=0;
-      for(   ;i<trg_cnt_;i++){
+      for(   ;i<static_cast<size_t>(trg_cnt_);i++){
         for(size_t j=0;j<TRG_DIM;j++){
           trg_value[j][i]=0;
         }
@@ -1052,7 +1052,7 @@ void generic_kernel(Real_t* r_src, int src_cnt, Real_t* v_src, int dof, Real_t* 
   }
   uKernel(src_coord,src_value,trg_coord,trg_value);
   { // Set v_trg
-    for(size_t i=0;i<trg_cnt ;i++){
+    for(size_t i=0;i<static_cast<size_t>(trg_cnt) ;i++){
       for(size_t j=0;j<TRG_DIM;j++){
         v_trg[i*TRG_DIM+j]+=trg_value[j][i];
       }
@@ -1085,7 +1085,7 @@ void laplace_poten_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_value,
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOFP = 1.0/(4*nwtn_scal*const_pi<Real_t>());
@@ -1195,7 +1195,7 @@ void laplace_dbl_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_value, M
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOFP = -1.0/(4*nwtn_scal*nwtn_scal*nwtn_scal*const_pi<Real_t>());
@@ -1306,7 +1306,7 @@ void laplace_grad_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_value, 
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOFP = -1.0/(4*nwtn_scal*nwtn_scal*nwtn_scal*const_pi<Real_t>());
@@ -1452,7 +1452,7 @@ void stokes_vel_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_value, Ma
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOEP = 1.0/(8*nwtn_scal*const_pi<Real_t>());
@@ -2416,7 +2416,7 @@ void biot_savart_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_value, M
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOFP = 1.0/(4*nwtn_scal*nwtn_scal*nwtn_scal*const_pi<Real_t>());
@@ -2551,7 +2551,7 @@ void helmholtz_poten_uKernel(Matrix<Real_t>& src_coord, Matrix<Real_t>& src_valu
   if(RSQRT_INTRIN==(Vec_t (*)(Vec_t))rsqrt_intrin3<Vec_t,Real_t>) NWTN_ITER=3;
 
   Real_t nwtn_scal=1; // scaling factor for newton iterations
-  for(int i=0;i<NWTN_ITER;i++){
+  for(int i=0;i<static_cast<int>(NWTN_ITER);i++){
     nwtn_scal=2*nwtn_scal*nwtn_scal*nwtn_scal;
   }
   const Real_t OOFP = 1.0/(4*nwtn_scal*const_pi<Real_t>());

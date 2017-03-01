@@ -479,7 +479,7 @@ void Matrix<T>::SVD(Matrix<T>& tU, Matrix<T>& tS, Matrix<T>& tVT){
   if(INFO!=0) std::cout<<INFO<<'\n';
   assert(INFO==0);
 
-  for(size_t i=1;i<k;i++){
+  for(int i=1;i<k;i++){
     tS[i][i]=tS[0][i];
     tS[0][i]=0;
   }

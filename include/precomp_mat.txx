@@ -96,7 +96,7 @@ size_t PrecompMat<T>::CompactData(int level, Mat_Type type, Matrix<char>& comp_d
   if(comp_data.Dim(0)*comp_data.Dim(1)>offset){
     char* indx_ptr=comp_data[0]+offset;
     HeaderData& header=*(HeaderData*)indx_ptr; indx_ptr+=sizeof(HeaderData);
-    if(level==header.level){ // Data already exists.
+    if(static_cast<size_t>(level)==header.level){ // Data already exists.
       offset+=header.total_size;
       return offset;
     }

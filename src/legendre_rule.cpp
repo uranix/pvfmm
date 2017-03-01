@@ -1508,7 +1508,7 @@ void timestamp ( )
   tm_ptr = std::localtime ( &now );
 
   len = std::strftime ( time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm_ptr );
-  assert(len>0);
+  assert(len>0); (void)(len); //UNUSED(len)
   std::cout << time_buffer << "\n";
 
   return;

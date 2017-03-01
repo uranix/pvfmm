@@ -25,7 +25,7 @@ void MortonId::NbrList(std::vector<MortonId>& nbrs, uint8_t level, int periodic)
 
   MortonId mid_tmp;
   mask=(((UINT_T)1)<<(MAX_DEPTH-level));
-  for(int i=0; i<nbr_cnt; i++){
+  for(int i=0; i<static_cast<int>(nbr_cnt); i++){
     INT_T dX = ((i/1)%3-1)*mask;
     INT_T dY = ((i/3)%3-1)*mask;
     INT_T dZ = ((i/9)%3-1)*mask;
@@ -41,9 +41,12 @@ void MortonId::NbrList(std::vector<MortonId>& nbrs, uint8_t level, int periodic)
         nbrs.push_back(mid_tmp);
       }
     }else{
-      if(newX<0) newX+=maxCoord; if(newX>=(INT_T)maxCoord) newX-=maxCoord;
-      if(newY<0) newY+=maxCoord; if(newY>=(INT_T)maxCoord) newY-=maxCoord;
-      if(newZ<0) newZ+=maxCoord; if(newZ>=(INT_T)maxCoord) newZ-=maxCoord;
+      if(newX<0) newX+=maxCoord;
+      if(newX>=(INT_T)maxCoord) newX-=maxCoord;
+      if(newY<0) newY+=maxCoord;
+      if(newY>=(INT_T)maxCoord) newY-=maxCoord;
+      if(newZ<0) newZ+=maxCoord;
+      if(newZ>=(INT_T)maxCoord) newZ-=maxCoord;
       mid_tmp.x=newX; mid_tmp.y=newY; mid_tmp.z=newZ;
       mid_tmp.depth=level;
       nbrs.push_back(mid_tmp);

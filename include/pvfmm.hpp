@@ -51,7 +51,7 @@ inline ChebFMM_Tree* ChebFMM_CreateTree(int cheb_deg, int data_dim, ChebFn fn_pt
   { // Set points for initial tree.
     std::vector<double> coord;
     size_t N=pvfmm::pow<unsigned int>(8,init_depth);
-    N=(N<np?np:N)*max_pts;
+    N=(N<static_cast<size_t>(np)?np:N)*max_pts;
     size_t NN=ceil(pvfmm::pow<double>(N,1.0/3.0));
     size_t N_total=NN*NN*NN;
     size_t start= myrank   *N_total/np;

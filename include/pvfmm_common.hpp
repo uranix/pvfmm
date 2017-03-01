@@ -11,9 +11,9 @@
 #define _PVFMM_COMMON_HPP_
 
 //Define NULL
-#ifndef NULL
-#define NULL 0
-#endif
+//#ifndef NULL
+//#define NULL 0
+//#endif
 
 //Disable assert checks.
 #ifndef NDEBUG
