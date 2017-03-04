@@ -104,10 +104,12 @@ typedef FMM_Pts<PtFMM_Node>         PtFMM;
 typedef FMM_Tree<PtFMM>             PtFMM_Tree;
 typedef PtFMM_Node::NodeData        PtFMM_Data;
 
-inline PtFMM_Tree* PtFMM_CreateTree(std::vector<double>&  src_coord, std::vector<double>&  src_value,
-                                    std::vector<double>& surf_coord, std::vector<double>& surf_value,
-                                    std::vector<double>& trg_coord, MPI_Comm& comm, int max_pts=100,
-                                    BoundaryType bndry=FreeSpace, int init_depth=0){
+inline PtFMM_Tree* PtFMM_CreateTree(
+        const std::vector<double>&  src_coord, const std::vector<double>&  src_value,
+        const std::vector<double>& surf_coord, const std::vector<double>& surf_value,
+        const std::vector<double>& trg_coord, const MPI_Comm& comm, int max_pts=100,
+        BoundaryType bndry=FreeSpace, int init_depth=0)
+{
   int np, myrank;
   MPI_Comm_size(comm, &np);
   MPI_Comm_rank(comm, &myrank);
@@ -135,15 +137,17 @@ inline PtFMM_Tree* PtFMM_CreateTree(std::vector<double>&  src_coord, std::vector
   return tree;
 }
 
-inline PtFMM_Tree* PtFMM_CreateTree(std::vector<double>&  src_coord, std::vector<double>&  src_value,
-                                    std::vector<double>& trg_coord, MPI_Comm& comm, int max_pts=100,
-                                    BoundaryType bndry=FreeSpace, int init_depth=0){
+inline PtFMM_Tree* PtFMM_CreateTree(
+        const std::vector<double>&  src_coord, const std::vector<double>&  src_value,
+        const std::vector<double>& trg_coord, MPI_Comm& comm, int max_pts=100,
+        BoundaryType bndry=FreeSpace, int init_depth=0)
+{
   std::vector<double> surf_coord;
   std::vector<double> surf_value;
   return PtFMM_CreateTree(src_coord, src_value, surf_coord,surf_value, trg_coord, comm, max_pts, bndry, init_depth);
 }
 
-inline void PtFMM_Evaluate(PtFMM_Tree* tree, std::vector<double>& trg_val, size_t loc_size=0, std::vector<double>* src_val=NULL, std::vector<double>* surf_val=NULL){
+inline void PtFMM_Evaluate(PtFMM_Tree* tree, std::vector<double>& trg_val, size_t loc_size=0, const std::vector<double>* src_val=NULL, const std::vector<double>* surf_val=NULL){
   if(src_val){
     std::vector<size_t> src_scatter_;
     std::vector<PtFMM_Node*>& nodes=tree->GetNodeList();
