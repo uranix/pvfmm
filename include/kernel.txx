@@ -599,7 +599,7 @@ void Kernel<T>::Initialize(bool verbose) const{
     std::cout<<"\n";
     std::cout<<"Kernel Name    : "<<ker_name<<'\n';
     std::cout<<"Precision      : "<<(double)eps<<'\n';
-    std::cout<<"Symmetry       : "<<(perm_vec.Dim()>0?"yes":"no")<<'\n';
+    std::cout<<"Symmetry       : "<<(perm_vec.Dim()>0?"yes(":"no(")<<perm_vec.Dim()<<")\n";
     std::cout<<"Scale Invariant: "<<(scale_invar?"yes":"no")<<'\n';
     if(scale_invar && ker_dim[0]*ker_dim[1]>0){
       std::cout<<"Scaling Matrix :\n";
