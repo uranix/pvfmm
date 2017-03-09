@@ -104,6 +104,8 @@ void Profile::Toc(){
 
     #ifndef NDEBUG
     if(comm_!=NULL && sync_) MPI_Barrier(*comm_);
+    #else
+    UNUSED(comm_);
     #endif
     name.pop();
     comm.pop();

@@ -124,8 +124,9 @@ class FMM_Pts{
    * \brief Initialize all the translation matrices (or load from file).
    * \param[in] mult_order Order of multipole expansion.
    * \param[in] kernel Kernel functions and related data.
+   * \param[in] verbose Display kernel information
    */
-  void Initialize(int mult_order, const MPI_Comm& comm, const Kernel<Real_t>* kernel);
+  void Initialize(int mult_order, const MPI_Comm& comm, const Kernel<Real_t>* kernel, bool verbose=false);
 
   /**
    * \brief Order for the multipole expansion.

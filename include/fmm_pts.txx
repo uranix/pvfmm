@@ -217,17 +217,15 @@ FMM_Pts<FMMNode>::~FMM_Pts() {
 
 
 template <class FMMNode>
-void FMM_Pts<FMMNode>::Initialize(int mult_order, const MPI_Comm& comm_, const Kernel<Real_t>* kernel_){
+void FMM_Pts<FMMNode>::Initialize(int mult_order, const MPI_Comm& comm_, const Kernel<Real_t>* kernel_, bool verbose_){
   Profile::Tic("InitFMM_Pts",&comm_,true);{
 
   int rank;
   MPI_Comm_rank(comm_,&rank);
   bool verbose=false;
-  #ifndef NDEBUG
-  #ifdef __VERBOSE__
-  if(!rank) verbose=true;
-  #endif
-  #endif
+
+  if(!rank) verbose=verbose_;
+
   if(kernel_) kernel_->Initialize(verbose);
 
   multipole_order=mult_order;

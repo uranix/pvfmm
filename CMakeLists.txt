@@ -32,7 +32,6 @@ configure_file("include/pvfmm_config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 include_directories("include")
-#add_definitions("-Wall -Werror -fmax-errors=5")
 add_definitions("-Wall -Werror")
 
 set(pvfmm_SOURCES

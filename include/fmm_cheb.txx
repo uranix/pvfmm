@@ -542,6 +542,8 @@ Matrix<typename FMMNode::Real_t>& FMM_Cheb<FMMNode>::Precomp(int level, Mat_Type
             cnt_done++;
             std::cout<<"\r Progress: "<<(100*progress*n_uc+100*cnt_done*np)/(class_count*n_uc)<<"% "<<std::flush;
           }
+          #else
+          UNUSED(cnt_done);
           #endif
           for(int k=0; k<this->kernel->k_s2m->ker_dim[1]; k++)
             for(size_t j=0; j<(size_t)M_s2c.Dim(0); j++)
@@ -607,6 +609,8 @@ Matrix<typename FMMNode::Real_t>& FMM_Cheb<FMMNode>::Precomp(int level, Mat_Type
             cnt_done++;
             std::cout<<"\r Progress: "<<(100*progress*n_trg+100*cnt_done*np)/(class_count*n_trg)<<"% "<<std::flush;
           }
+          #else
+          UNUSED(cnt_done);
           #endif
           for(int k=0; k<this->kernel->k_s2t->ker_dim[1]; k++)
             for(size_t j=0; j<(size_t)M_s2t.Dim(0); j++)
@@ -657,6 +661,8 @@ Matrix<typename FMMNode::Real_t>& FMM_Cheb<FMMNode>::Precomp(int level, Mat_Type
             cnt_done++;
             std::cout<<"\r Progress: "<<(100*progress*n_trg+100*cnt_done*np)/(class_count*n_trg)<<"% "<<std::flush;
           }
+          #else
+          UNUSED(cnt_done);
           #endif
           for(int k=0; k<this->kernel->k_s2t->ker_dim[1]; k++)
             for(size_t j=0; j<(size_t)M_s2t.Dim(0); j++)
@@ -707,6 +713,8 @@ Matrix<typename FMMNode::Real_t>& FMM_Cheb<FMMNode>::Precomp(int level, Mat_Type
             cnt_done++;
             std::cout<<"\r Progress: "<<(100*progress*n_trg+100*cnt_done*np)/(class_count*n_trg)<<"% "<<std::flush;
           }
+          #else
+          UNUSED(cnt_done);
           #endif
           for(int k=0; k<this->kernel->k_s2t->ker_dim[1]; k++)
             for(size_t j=0; j<(size_t)M_s2t.Dim(0); j++)
@@ -772,6 +780,8 @@ Matrix<typename FMMNode::Real_t>& FMM_Cheb<FMMNode>::Precomp(int level, Mat_Type
             cnt_done++;
             std::cout<<"\r Progress: "<<(100*progress*n_trg+100*cnt_done*np)/(class_count*n_trg)<<"% "<<std::flush;
           }
+          #else
+          UNUSED(cnt_done);
           #endif
           for(int k=0; k<this->kernel->k_s2l->ker_dim[1]; k++)
             for(size_t j=0; j<(size_t)M_xs2c.Dim(0); j++)
