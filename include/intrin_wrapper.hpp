@@ -26,47 +26,47 @@
 
 namespace pvfmm{
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T zero_intrin(){
   return (T)0;
 }
 
-template <class T, class Real_t>
+template <class T, class Real_t, int MANGLE_SIZE=sizeof(T)>
 inline T set_intrin(const Real_t& a){
   return a;
 }
 
-template <class T, class Real_t>
+template <class T, class Real_t, int MANGLE_SIZE=sizeof(T)>
 inline T load_intrin(Real_t const* a){
   return a[0];
 }
 
-template <class T, class Real_t>
+template <class T, class Real_t, int MANGLE_SIZE=sizeof(T)>
 inline T bcast_intrin(Real_t const* a){
   return a[0];
 }
 
-template <class T, class Real_t>
+template <class T, class Real_t, int MANGLE_SIZE=sizeof(T)>
 inline void store_intrin(Real_t* a, const T& b){
   a[0]=b;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T mul_intrin(const T& a, const T& b){
   return a*b;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T add_intrin(const T& a, const T& b){
   return a+b;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T sub_intrin(const T& a, const T& b){
   return a-b;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T cmplt_intrin(const T& a, const T& b){
   T r=0;
   uint8_t* r_=reinterpret_cast<uint8_t*>(&r);
@@ -74,7 +74,7 @@ inline T cmplt_intrin(const T& a, const T& b){
   return r;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T and_intrin(const T& a, const T& b){
   T r=0;
   const uint8_t* a_=reinterpret_cast<const uint8_t*>(&a);
@@ -84,41 +84,41 @@ inline T and_intrin(const T& a, const T& b){
   return r;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T rsqrt_approx_intrin(const T& r2){
   if(r2!=0) return 1.0/pvfmm::sqrt<T>(r2);
   return 0;
 }
 
-template <class T, class Real_t>
+template <class T, class Real_t, int MANGLE_SIZE=sizeof(T)>
 inline void rsqrt_newton_intrin(T& rinv, const T& r2, const Real_t& nwtn_const){
   rinv=rinv*(nwtn_const-r2*rinv*rinv);
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T rsqrt_single_intrin(const T& r2){
   if(r2!=0) return 1.0/pvfmm::sqrt<T>(r2);
   return 0;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T max_intrin(const T& a, const T& b){
   if(a>b) return a;
   else return b;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T min_intrin(const T& a, const T& b){
   if(a>b) return b;
   else return a;
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T sin_intrin(const T& t){
   return pvfmm::sin<T>(t);
 }
 
-template <class T>
+template <class T, int MANGLE_SIZE=sizeof(T)>
 inline T cos_intrin(const T& t){
   return pvfmm::cos<T>(t);
 }

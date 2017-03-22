@@ -265,6 +265,7 @@ void fmm_test(int test_case, size_t N, size_t M, bool unif, int mult_order, int 
       fn_input_=NULL;
       fn_poten_=NULL;
       fn_grad_ =NULL;
+      bndry=pvfmm::FreeSpace;
       break;
   }
 

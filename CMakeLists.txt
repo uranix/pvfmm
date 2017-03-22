@@ -1,5 +1,5 @@
-project(pvfmm)
 cmake_minimum_required(VERSION 2.8)
+project(pvfmm)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 find_package(MPI REQUIRED)
@@ -32,7 +32,7 @@ configure_file("include/pvfmm_config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 include_directories("include")
-add_definitions("-Wall -Werror")
+add_definitions("-Wall -Werror -std=c++11 -march=native")
 
 set(pvfmm_SOURCES
 	src/cheb_utils.cpp
